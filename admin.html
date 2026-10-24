@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Admin | Favourite Kitchen</title>
+<style>
+:root{--green:#10301f;--oil:#f0a30a;--line:#dfe3da}
+*{box-sizing:border-box;margin:0}
+body{font:16px/1.5 system-ui,sans-serif;background:#f6f7f3;color:#1d2420;padding-bottom:90px}
+header{background:var(--green);color:#fff;padding:14px 18px;font-weight:700}
+main{max-width:720px;margin:0 auto;padding:18px}
+h2{margin:26px 0 10px;font-size:1.15rem;border-bottom:3px solid var(--oil);padding-bottom:6px}
+.card{background:#fff;border:1px solid var(--line);border-radius:10px;padding:14px}
+.r{display:grid;grid-template-columns:1fr 110px 38px;gap:8px;margin-bottom:8px}
+.r.s{grid-template-columns:1fr 100px 38px}
+.r.a{grid-template-columns:1fr 1fr 38px}
+input,textarea{width:100%;padding:10px;border:1px solid #b9c0b4;border-radius:7px;font:inherit}
+label{display:block;font-weight:600;margin:10px 0 4px}
+button{font:inherit;font-weight:700;border:0;border-radius:7px;padding:10px 14px;cursor:pointer}
+.x{background:#f3d9d6;color:#8a1c12;padding:0}
+.add{background:#e4eadf;color:var(--green);margin-top:4px}
+.save{background:var(--oil);color:#1b1500;width:100%;padding:14px}
+.bar{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid var(--line);padding:12px 18px}
+.bar div{max-width:720px;margin:auto}
+#msg{margin-top:8px;font-weight:600}
+#login{max-width:360px;margin:60px auto;padding:0 18px}
+#app{display:none}
+small{color:#5c675f}
+</style>
+</head>
+<body>
+<header>Favourite Kitchen admin</header>
+<div id="login">
+  <div class="card">
+    <label for="pw">Admin password</label>
+    <input id="pw" type="password" autocomplete="current-password">
+    <button class="save" style="margin-top:14px" id="go">Open admin</button>
+    <p id="lerr" style="color:#8a1c12;margin-top:8px"></p>
+  </div>
+</div>
+<main id="app">
+  <h2>Special dishes</h2><div class="card" id="specials"></div>
+  <h2>Soup prices</h2><div class="card" id="soups"></div>
+  <h2>Drink prices</h2><div class="card" id="drinks"></div>
+  <h2>Contact and notice</h2>
+  <div class="card">
+    <label for="phone">Phone number</label><input id="phone" inputmode="tel">
+    <label for="whatsapp">WhatsApp number (country code, no +)</label><input id="whatsapp" inputmode="numeric">
+    <label for="facebook">Facebook page link</label><input id="facebook" placeholder="https://facebook.com/yourpage">
+    <label for="notice">Price notice</label><textarea id="notice" rows="2"></textarea>
+  </div>
+  <h2>Bank accounts</h2><div class="card" id="accounts"></div>
+  <p style="margin-top:14px"><small>Leave a price empty to show "Ask for price". Prices are numbers only, for example 2000.</small></p>
+</main>
+<div class="bar" id="bar" hidden><div><button class="save" id="save">Save changes</button><p id="msg" role="status"></p></div></div>
+<script src="defaults.js"></script>
+<script>
+var data=DEFAULT,pass="";
+var $=function(i){return document.getElementById(i)};
+function esc(s){return String(s==null?"":s).replace(/&/g,"&amp;").replace(/"/g,"&quot;").replace(/</g,"&lt;")}
+var SECTIONS={
+  specials:{cls:"s",f:[["name","Dish name"],["price","Price"]],blank:{name:"",img:"",price:""},btn:"Add dish"},
+  soups:{cls:"",f:[["name","Item"],["price","Price"]],blank:{name:"",price:""},btn:"Add soup"},
+  drinks:{cls:"",f:[["name","Item"],["price","Price"]],blank:{name:"",price:""},btn:"Add drink"},
+  accounts:{cls:"a",f:[["bank","Bank"],["number","Account number"],["name","Account name"]],blank:{bank:"",number:"",name:""},btn:"Add account"}
+};
+function draw(){
+  Object.keys(SECTIONS).forEach(function(k){
+    var S=SECTIONS[k],html="";
+    data[k].forEach(function(row,i){
+      if(k==="accounts"){
+        html+='<div class="card" style="margin-bottom:8px">'+S.f.map(function(f){return '<label>'+f[1]+'</label><input data-k="'+k+'" data-i="'+i+'" data-f="'+f[0]+'" value="'+esc(row[f[0]])+'">'}).join("")+'<button class="x add" style="margin-top:10px;width:100%;padding:8px" data-del="'+k+':'+i+'">Remove account</button></div>';
+      }else{
+        html+='<div class="r '+S.cls+'">'+S.f.map(function(f){return '<input aria-label="'+f[1]+'" placeholder="'+f[1]+'" data-k="'+k+'" data-i="'+i+'" data-f="'+f[0]+'" value="'+esc(row[f[0]])+'"'+(f[0]==="price"?' inputmode="numeric"':'')+'>'}).join("")+'<button class="x" aria-label="Remove" data-del="'+k+':'+i+'">✕</button></div>';
+      }
+    });
+    html+='<button class="add" data-add="'+k+'">'+S.btn+'</button>';
+    $(k).innerHTML=html;
+  });
+  ["phone","whatsapp","facebook","notice"].forEach(function(f){$(f).value=data[f]||""});
+}
+document.addEventListener("input",function(e){
+  var t=e.target;
+  if(t.dataset.k){data[t.dataset.k][+t.dataset.i][t.dataset.f]=t.value}
+  else if(["phone","whatsapp","facebook","notice"].indexOf(t.id)>-1){data[t.id]=t.value}
+});
+document.addEventListener("click",function(e){
+  var t=e.target;
+  if(t.dataset.add){var k=t.dataset.add;data[k].push(JSON.parse(JSON.stringify(SECTIONS[k].blank)));draw()}
+  if(t.dataset.del){var p=t.dataset.del.split(":");data[p[0]].splice(+p[1],1);draw()}
+});
+$("go").onclick=function(){
+  pass=$("pw").value;
+  fetch("/api/menu").then(function(r){return r.json()}).then(function(d){
+    if(d&&d.specials)data=d;
+    $("login").style.display="none";$("app").style.display="block";$("bar").hidden=false;draw();
+  }).catch(function(){$("lerr").textContent="Could not connect. Check that the site is deployed with functions."});
+};
+$("pw").addEventListener("keydown",function(e){if(e.key==="Enter")$("go").click()});
+$("save").onclick=function(){
+  $("msg").textContent="Saving...";
+  fetch("/api/menu",{method:"POST",headers:{"content-type":"application/json","x-admin-password":pass},body:JSON.stringify(data)})
+  .then(function(r){return r.json().then(function(j){return{ok:r.ok,j:j}})})
+  .then(function(x){$("msg").textContent=x.ok?"Saved. Your website is updated.":(x.j.error==="Wrong password"?"Wrong password. Reload and try again.":"Could not save.")})
+  .catch(function(){$("msg").textContent="Could not save. Check your connection."});
+};
+</script>
+</body>
+</html>

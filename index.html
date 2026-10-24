@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Favourite Kitchen | Home of Good Food, Awo-Omamma</title>
+<meta name="description" content="Favourite Kitchen in Awo-Omamma: Ofe Nsala, Ofe Olugbo, catfish pepper soup, cold drinks and fast delivery.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@600;800&family=Nunito+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--green:#10301f;--green2:#1c4a30;--oil:#f0a30a;--ink:#1d2420;--mute:#5c675f;--bg:#f6f7f3;--card:#fff;--line:#dfe3da}
+*{box-sizing:border-box;margin:0}
+html{scroll-behavior:smooth}
+body{font:400 1rem/1.6 "Nunito Sans",system-ui,sans-serif;color:var(--ink);background:var(--bg)}
+h1,h2,h3{font-family:Fraunces,Georgia,serif;line-height:1.15}
+a{color:inherit}
+:focus-visible{outline:3px solid var(--oil);outline-offset:2px}
+.wrap{max-width:1040px;margin:0 auto;padding:0 20px}
+header{position:sticky;top:0;z-index:5;background:var(--green);color:#fff}
+header .wrap{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:60px;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:10px;font:800 1.2rem Fraunces,Georgia,serif;text-decoration:none}.logo{width:38px;height:38px;border-radius:50%;object-fit:cover}
+nav{display:flex;gap:18px;font-weight:600;font-size:.95rem}
+nav a{text-decoration:none;opacity:.88;padding:6px 0}
+nav a:hover{opacity:1;color:var(--oil)}
+.hero{background:var(--green);color:#fff;padding:56px 0 64px}
+.hero .wrap{display:grid;gap:32px;align-items:center}
+.hero h1{font-size:clamp(2.4rem,8vw,4.2rem);font-weight:800}
+.hero p{max-width:34ch;margin:14px 0 24px;color:#d4e0d7;font-size:1.1rem}
+.hero img{width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:10px;border:4px solid var(--oil)}
+.btns{display:flex;gap:12px;flex-wrap:wrap}
+.btn{display:inline-block;padding:13px 22px;border-radius:8px;font-weight:700;text-decoration:none;background:var(--oil);color:#1b1500}
+.btn.alt{background:transparent;color:#fff;border:2px solid #fff6}
+.btn:hover{filter:brightness(1.08)}
+section{padding:56px 0}
+section h2{font-size:clamp(1.7rem,5vw,2.3rem);margin-bottom:8px}
+.sub{color:var(--mute);margin-bottom:28px}
+.grid{display:grid;gap:18px;grid-template-columns:repeat(auto-fill,minmax(230px,1fr))}
+.dish{background:var(--card);border-radius:10px;overflow:hidden;border:1px solid var(--line)}
+.dish img{width:100%;aspect-ratio:1;object-fit:cover;display:block;background:#e5e8e1}
+.dish div{padding:14px 16px}
+.dish h3{font-size:1.1rem}
+.price{color:var(--green2);font-weight:700;margin-top:4px}
+.drinks{display:grid;gap:24px;margin-top:8px}
+.drinks img{width:100%;max-height:340px;object-fit:cover;border-radius:10px}
+.about{background:var(--card);border-block:1px solid var(--line)}
+.about p{max-width:62ch;font-size:1.08rem}
+.about p+p{margin-top:14px}
+.lists{display:grid;gap:28px;grid-template-columns:repeat(auto-fit,minmax(280px,1fr))}
+.list h3{margin-bottom:10px;padding-bottom:8px;border-bottom:3px solid var(--oil)}
+.row{display:flex;justify-content:space-between;gap:12px;padding:10px 0;border-bottom:1px dashed var(--line)}
+.row{flex-wrap:wrap}.row b{white-space:nowrap}
+.note{margin-top:22px;color:var(--mute);font-size:.92rem}
+.pay{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(260px,1fr))}
+.acct{background:var(--card);border:1px solid var(--line);border-left:6px solid var(--oil);border-radius:10px;padding:18px}
+.acct small{color:var(--mute)}
+.acct .num{font:700 1.5rem Fraunces,Georgia,serif;letter-spacing:.04em;margin:2px 0}
+.copy{margin-top:8px;border:1px solid var(--green2);background:none;color:var(--green2);padding:6px 14px;border-radius:6px;font:700 .85rem inherit;cursor:pointer}
+.order{background:var(--green);color:#fff;text-align:center}
+.order p{margin:6px auto 22px;color:#d4e0d7}
+.order .btns{justify-content:center}
+footer{padding:26px 0;text-align:center;color:var(--mute);font-size:.9rem}
+@media(min-width:760px){.hero .wrap{grid-template-columns:1.1fr 1fr}.drinks{grid-template-columns:1fr 1fr;align-items:center}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+</style>
+</head>
+<body>
+<header><div class="wrap">
+  <a class="brand" href="#top"><img src="1000314915.jpg" alt="Favourite Kitchen logo" class="logo">Favourite Kitchen</a>
+  <nav aria-label="Main"><a href="#menu">Menu</a><a href="#prices">Prices</a><a href="#about">About</a><a href="#payment">Payment</a></nav>
+</div></header>
+
+<main id="top">
+<div class="hero"><div class="wrap">
+  <div>
+    <h1>Home of good food</h1>
+    <p>Real Igbo soups, hot pepper soup and cold drinks in Awo-Omamma. Your satisfaction is our priority.</p>
+    <div class="btns">
+      <a class="btn" id="waBtn" href="#">Order on WhatsApp</a>
+      <a class="btn alt" id="callBtn" href="#">Call 07032856664</a>
+    </div>
+  </div>
+  <img src="1000314930.jpg" alt="Ofe Nsala (white soup) from Favourite Kitchen">
+</div></div>
+
+<section id="menu"><div class="wrap">
+  <h2>Our special dishes</h2>
+  <p class="sub">Cooked fresh and served hot, at the kitchen or at your door.</p>
+  <div class="grid" id="specials"></div>
+</div></section>
+
+<section style="padding-top:0"><div class="wrap">
+  <h2>Chilled drinks and bar</h2>
+  <div class="drinks">
+    <img src="1000314961.jpg" alt="Cold beers and soft drinks" loading="lazy">
+    <p class="sub" style="margin:0">Cold beers and soft drinks, ready when your food is. Prices are in the list below.</p>
+  </div>
+</div></section>
+
+<section id="prices" class="about"><div class="wrap">
+  <h2>Menu prices</h2>
+  <p class="sub">Prices in naira (₦).</p>
+  <div class="lists" id="lists"></div>
+  <p class="note" id="notice"></p>
+</div></section>
+
+<section id="about"><div class="wrap">
+  <h2>About us</h2>
+  <p>Favourite Kitchen is a local kitchen and bar in Awo-Omamma. We cook traditional soups the way they should taste: Ofe Nsala, Ofe Olugbo, Egusi, Oha and Ogbono, plus hot catfish pepper soup and special noodles.</p>
+  <p>You can eat with us, order for pickup, or have your food delivered to your door. Every plate is made fresh, and your satisfaction is our priority.</p>
+</div></section>
+
+<section id="payment" class="about"><div class="wrap">
+  <h2>Payment method</h2>
+  <p class="sub">To complete your order, make a bank transfer to either account below, then send your receipt on WhatsApp.</p>
+  <div class="pay" id="pay"></div>
+</div></section>
+
+<section class="order"><div class="wrap">
+  <h2>Place your order now</h2>
+  <p>Fast delivery straight to your doorstep or table.</p>
+  <div class="btns">
+    <a class="btn" id="waBtn2" href="#">Order on WhatsApp</a>
+    <a class="btn alt" id="fbBtn" href="#" target="_blank" rel="noopener" hidden>Find us on Facebook</a>
+  </div>
+</div></section>
+</main>
+<footer>© <span id="yr"></span> Favourite Kitchen, Awo-Omamma</footer>
+
+<script src="defaults.js"></script>
+<script>
+
+function esc(s){var d=document.createElement("div");d.textContent=s==null?"":s;return d.innerHTML}
+function naira(p){return p?"₦"+Number(p).toLocaleString("en-NG"):"Ask for price"}
+function render(d){
+  document.getElementById("specials").innerHTML=d.specials.map(function(x){
+    return '<article class="dish"><img src="'+esc(x.img)+'" alt="'+esc(x.name)+'" loading="lazy"><div><h3>'+esc(x.name)+'</h3><div class="price">'+naira(x.price)+'</div></div></article>'}).join("");
+  function list(t,a){return '<div class="list"><h3>'+t+'</h3>'+a.map(function(x){return '<div class="row"><span>'+esc(x.name)+'</span><b>'+naira(x.price)+'</b></div>'}).join("")+'</div>'}
+  document.getElementById("lists").innerHTML=list("Delicious soups",d.soups)+list("Chilled drinks",d.drinks);
+  document.getElementById("notice").textContent=d.notice||"";
+  document.getElementById("pay").innerHTML=d.accounts.map(function(a,i){
+    return '<div class="acct"><small>'+esc(a.bank)+'</small><div class="num">'+esc(a.number)+'</div><div>'+esc(a.name)+'</div><button class="copy" data-n="'+esc(a.number)+'">Copy number</button></div>'}).join("");
+  var wa="https://wa.me/"+d.whatsapp+"?text="+encodeURIComponent("Hello Favourite Kitchen, I want to place a food order!");
+  document.getElementById("waBtn").href=wa;document.getElementById("waBtn2").href=wa;
+  var c=document.getElementById("callBtn");c.href="tel:"+d.phone;c.textContent="Call "+d.phone;
+  var f=document.getElementById("fbBtn");if(d.facebook){f.href=d.facebook;f.hidden=false}
+  window.__menuData=d;window.onMenu&&onMenu(d)
+}
+render(DEFAULT);
+fetch("/api/menu").then(function(r){return r.ok?r.json():null}).then(function(d){if(d&&d.specials)render(d)}).catch(function(){});
+document.addEventListener("click",function(e){var b=e.target.closest(".copy");if(!b)return;
+  navigator.clipboard&&navigator.clipboard.writeText(b.dataset.n).then(function(){b.textContent="Copied";setTimeout(function(){b.textContent="Copy number"},1500)})});
+document.getElementById("yr").textContent=new Date().getFullYear();
+</script>
+<script src="shop.js"></script>
+</body>
+</html>

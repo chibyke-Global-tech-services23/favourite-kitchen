@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="robots" content="noindex">
+<title>Orders | Favourite Kitchen</title>
+<style>*{box-sizing:border-box;margin:0}body{font:16px/1.5 system-ui,sans-serif;background:#f6f7f3;color:#1d2420}header{background:#10301f;color:#fff;padding:14px 18px;font-weight:700}main{max-width:720px;margin:auto;padding:16px}.c{background:#fff;border:1px solid #dfe3da;border-left:6px solid #f0a30a;border-radius:10px;padding:14px;margin-bottom:12px}input,select,button{font:inherit;padding:10px;border-radius:7px;border:1px solid #b9c0b4;width:100%;margin-top:8px}button{background:#f0a30a;border:0;font-weight:700}small{color:#5c675f}</style></head>
+<body><header>Favourite Kitchen orders</header>
+<main><div id="lg" class="c"><label for="pw">Admin password</label><input id="pw" type="password"><button id="go">Open orders</button><p id="er" style="color:#8a1c12"></p></div><div id="ls"></div></main>
+<script>
+var pw="",ST=["New","Preparing","Out for delivery","Done","Cancelled"];
+function esc(s){var d=document.createElement("div");d.textContent=s==null?"":s;return d.innerHTML}
+function load(){fetch("/api/orders",{headers:{"x-admin-password":pw}}).then(function(r){return r.json().then(function(j){if(!r.ok)throw new Error(j.error);return j})}).then(function(o){
+  document.getElementById("lg").style.display="none";
+  document.getElementById("ls").innerHTML=o.length?o.map(function(x){return '<div class="c"><b>'+x.id+'</b> · ₦'+Number(x.total).toLocaleString()+'<br><small>'+new Date(x.time).toLocaleString()+'</small><br>'+x.items.map(function(i){return i.qty+"× "+esc(i.name)}).join(", ")+'<br><b>'+esc(x.name)+'</b> · <a href="tel:'+esc(x.phone)+'">'+esc(x.phone)+'</a><br>'+esc(x.address)+(x.note?'<br><small>Note: '+esc(x.note)+'</small>':'')+'<select data-id="'+x.id+'">'+ST.map(function(s){return '<option'+(s===x.status?' selected':'')+'>'+s+'</option>'}).join("")+'</select></div>'}).join(""):'<p>No orders yet.</p>'}).catch(function(e){document.getElementById("er").textContent=e.message==="Wrong password."||e.message==="Not allowed."?"Wrong password.":"Could not load orders."})}
+document.getElementById("go").onclick=function(){pw=document.getElementById("pw").value;load();setInterval(function(){if(pw)load()},30000)};
+document.addEventListener("change",function(e){if(e.target.dataset.id)fetch("/api/orders",{method:"PUT",headers:{"content-type":"application/json","x-admin-password":pw},body:JSON.stringify({id:e.target.dataset.id,status:e.target.value})})});
+</script></body></html>
