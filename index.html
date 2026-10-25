@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Favourite Kitchen | Home of Good Food, Awo-Omamma</title>
-<meta name="description" content="Favourite Kitchen in Awo-Omamma: Ofe Nsala, Ofe Olugbo, catfish pepper soup, cold drinks and fast delivery.">
+<meta name="description" content="Favourite Kitchen in Awo-Omamma: a kitchen made for your taste and satisfaction. Soups, shawarma, noodles, cold drinks and fast delivery.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@600;800&family=Nunito+Sans:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
@@ -37,11 +37,12 @@ section h2{font-size:clamp(1.7rem,5vw,2.3rem);margin-bottom:8px}
 .grid{display:grid;gap:18px;grid-template-columns:repeat(auto-fill,minmax(230px,1fr))}
 .dish{background:var(--card);border-radius:10px;overflow:hidden;border:1px solid var(--line)}
 .dish img{width:100%;aspect-ratio:1;object-fit:cover;display:block;background:#e5e8e1}
-.dish div{padding:14px 16px}
+.dish div{padding:14px 16px}.dish .ph{padding:0;aspect-ratio:1;background:#e5e8e1}
 .dish h3{font-size:1.1rem}
 .price{color:var(--green2);font-weight:700;margin-top:4px}
 .drinks{display:grid;gap:24px;margin-top:8px}
 .drinks img{width:100%;max-height:340px;object-fit:cover;border-radius:10px}
+.dg{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(150px,1fr))}.dg img{width:100%;height:170px;object-fit:cover;border-radius:10px;background:#fff}.dg .rad{object-fit:contain}
 .about{background:var(--card);border-block:1px solid var(--line)}
 .about p{max-width:62ch;font-size:1.08rem}
 .about p+p{margin-top:14px}
@@ -73,7 +74,7 @@ footer{padding:26px 0;text-align:center;color:var(--mute);font-size:.9rem}
 <div class="hero"><div class="wrap">
   <div>
     <h1>Home of good food</h1>
-    <p>Real Igbo soups, hot pepper soup and cold drinks in Awo-Omamma. Your satisfaction is our priority.</p>
+    <p>A kitchen made for your taste and satisfaction, in Awo-Omamma. Your satisfaction is our priority.</p>
     <div class="btns">
       <a class="btn" id="waBtn" href="#">Order on WhatsApp</a>
       <a class="btn alt" id="callBtn" href="#">Call 07032856664</a>
@@ -90,14 +91,17 @@ footer{padding:26px 0;text-align:center;color:var(--mute);font-size:.9rem}
 
 <section style="padding-top:0"><div class="wrap">
   <h2>Chilled drinks and bar</h2>
-  <div class="drinks">
-    <img src="1000314961.jpg" alt="Cold beers and soft drinks" loading="lazy">
-    <p class="sub" style="margin:0">Cold beers and soft drinks, ready when your food is. Prices are in the list below.</p>
-  </div>
+  <div class="dg">
+      <img src="1000314962.jpg" alt="Cold beers" loading="lazy">
+      <img src="1000435631.jpg" alt="Soft drinks" loading="lazy">
+      <img src="1000435632.jpg" alt="Spirits" loading="lazy">
+      <img src="1000318732.jpg" alt="Star Radler" loading="lazy" class="rad">
+    </div>
+    <p class="sub" style="margin-top:14px">Cold beers, soft drinks and spirits, ready when your food is. Prices are in the list below.</p>
 </div></section>
 
 <section id="prices" class="about"><div class="wrap">
-  <h2>Menu prices</h2>
+  <h2 style="display:flex;align-items:center;gap:12px">Menu prices <img src="1000318850.jpg" alt="Affordable prices" style="width:60px;height:60px;border-radius:50%"></h2>
   <p class="sub">Prices in naira (₦).</p>
   <div class="lists" id="lists"></div>
   <p class="note" id="notice"></p>
@@ -105,7 +109,7 @@ footer{padding:26px 0;text-align:center;color:var(--mute);font-size:.9rem}
 
 <section id="about"><div class="wrap">
   <h2>About us</h2>
-  <p>Favourite Kitchen is a local kitchen and bar in Awo-Omamma. We cook traditional soups the way they should taste: Ofe Nsala, Ofe Olugbo, Egusi, Oha and Ogbono, plus hot catfish pepper soup and special noodles.</p>
+  <p>Favourite Kitchen is a kitchen made for your taste and satisfaction, in Awo-Omamma. Our menu goes beyond one kind of food: soups like Ofe Nsala, Ofe Olugbo, Egusi, Oha and Ogbono, hot catfish pepper soup, special noodles, shawarma and more.</p>
   <p>You can eat with us, order for pickup, or have your food delivered to your door. Every plate is made fresh, and your satisfaction is our priority.</p>
 </div></section>
 
@@ -133,9 +137,9 @@ function esc(s){var d=document.createElement("div");d.textContent=s==null?"":s;r
 function naira(p){return p?"₦"+Number(p).toLocaleString("en-NG"):"Ask for price"}
 function render(d){
   document.getElementById("specials").innerHTML=d.specials.map(function(x){
-    return '<article class="dish"><img src="'+esc(x.img)+'" alt="'+esc(x.name)+'" loading="lazy"><div><h3>'+esc(x.name)+'</h3><div class="price">'+naira(x.price)+'</div></div></article>'}).join("");
+    return '<article class="dish">'+(x.img?'<img src="'+esc(x.img)+'" alt="'+esc(x.name)+'" loading="lazy">':'<div class="ph"></div>')+'<div><h3>'+esc(x.name)+'</h3><div class="price">'+naira(x.price)+'</div></div></article>'}).join("");
   function list(t,a){return '<div class="list"><h3>'+t+'</h3>'+a.map(function(x){return '<div class="row"><span>'+esc(x.name)+'</span><b>'+naira(x.price)+'</b></div>'}).join("")+'</div>'}
-  document.getElementById("lists").innerHTML=list("Delicious soups",d.soups)+list("Chilled drinks",d.drinks);
+  document.getElementById("lists").innerHTML=list("Food menu",d.soups)+list("Drinks",d.drinks);
   document.getElementById("notice").textContent=d.notice||"";
   document.getElementById("pay").innerHTML=d.accounts.map(function(a,i){
     return '<div class="acct"><small>'+esc(a.bank)+'</small><div class="num">'+esc(a.number)+'</div><div>'+esc(a.name)+'</div><button class="copy" data-n="'+esc(a.number)+'">Copy number</button></div>'}).join("");
