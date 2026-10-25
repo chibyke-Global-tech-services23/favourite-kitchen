@@ -37,6 +37,22 @@ function login(mode){var b={mode:mode,email:val("em"),password:val("pw"),name:va
   api("/api/auth",{method:"POST",body:JSON.stringify(b)}).then(function(u){S.user=u;try{localStorage.setItem("kfu",JSON.stringify(u))}catch(e){}bars();open(count()?"cart":"orders")}).catch(function(e){open(mode==="signup"?"signup":"login",e.message)})}
 function val(i){var e=document.getElementById(i);return e?e.value:""}
 function person(){var m=S.menu||{};if(TAWK&&window.Tawk_API&&Tawk_API.maximize){Tawk_API.maximize();close()}else window.open("https://wa.me/"+(m.whatsapp||"2347032856664")+"?text="+encodeURIComponent("Hello Favourite Kitchen, I need help."),"_blank")}
+function faq(q){var m=S.menu||{},t=q.toLowerCase(),ph=m.phone||"07032856664";
+  function has(re){return re.test(t)}
+  var stop=" what which have much does price cost your with there that this please want need sell soup soups "
+  var words=t.replace(/[^a-z ]/g," ").split(" ").filter(function(w){return w.length>3&&stop.indexOf(" "+w+" ")<0});
+  var hits=S.items.filter(function(it){var n=it.name.toLowerCase();return words.some(function(w){return n.indexOf(w)>-1})});
+  var seen={};hits=hits.filter(function(i){if(seen[i.name])return false;seen[i.name]=1;return true}).slice(0,6);
+  if(has(/^(hi|hello|hey|good (morning|afternoon|evening))/))return "Hello! Welcome to Favourite Kitchen. Ask me about our food, prices, delivery or payment.";
+  if(hits.length&&!has(/deliver|pay|account|open|where|locat/))return hits.map(function(i){return i.name+": "+(i.price?n(i.price):"ask us for the price")}).join("\n");
+  if(has(/deliver/))return "Yes, we deliver. The delivery fee starts from ₦5,000 and depends on your location. Add your address when you place the order.";
+  if(has(/pay|transfer|account|bank|opay|palmpay|first/)){var a=(m.accounts||[]).map(function(x){return x.bank+": "+x.number+" ("+x.name+")"}).join("\n");return "Pay by bank transfer, then send your receipt on WhatsApp.\n"+a}
+  if(has(/how.*order|order|buy|cart/))return "Tap 'Add to cart' on any dish, open Cart, enter your phone and address, and place your order. Then pay by transfer and send the receipt on WhatsApp.";
+  if(has(/menu|food|eat|sell|dish|soup|drink/))return "We have soups, pepper soup, noodles, abacha, nkwobi, shawarma and cold drinks. Scroll to Menu prices on this page to see everything.";
+  if(has(/where|locat|address|direction|find you/))return "We are in Awo-Omamma. For exact directions, tap 'Talk to a person'.";
+  if(has(/open|close|hour|time/))return "For our opening hours, please tap 'Talk to a person'.";
+  if(has(/phone|call|number|contact|whatsapp/))return "Call "+ph+" or tap 'Talk to a person' to chat on WhatsApp.";
+  return "I am not sure about that. Please tap 'Talk to a person' and we will help you."}
 document.addEventListener("click",function(e){var t=e.target,id=t.id;
   if(t.dataset&&t.dataset.add){var it=S.items[+t.dataset.add];S.cart[it.name]=S.cart[it.name]||{price:it.price,qty:0};S.cart[it.name].qty++;bars();t.textContent="Added ✓";setTimeout(function(){t.textContent="Add to cart"},900);return}
   if(t.dataset&&t.dataset.m!==undefined){if(--S.cart[t.dataset.m].qty<1)delete S.cart[t.dataset.m];draw();bars();return}
@@ -52,7 +68,7 @@ document.addEventListener("click",function(e){var t=e.target,id=t.id;
     api("/api/orders",{method:"POST",body:JSON.stringify({items:Object.keys(S.cart).map(function(k){return{name:k,price:S.cart[k].price,qty:S.cart[k].qty}}),phone:val("ph"),address:ad,note:val("nt")})}).then(function(r){
       var m=S.menu||{};S.oid=r.id;S.ot=r.total;S.wa="https://wa.me/"+(m.whatsapp||"2347032856664")+"?text="+encodeURIComponent("Hello, I placed order "+r.id+" (₦"+r.total+"). Here is my payment receipt.");S.cart={};bars();open("done")}).catch(function(er){open("cart",er.message)})}
   else if(id==="cs"){var q=val("ci").trim();if(!q)return;S.chat.push({role:"user",content:q});S.chat.push({role:"assistant",content:"..."});draw();
-    api("/api/chat",{method:"POST",body:JSON.stringify({messages:S.chat.slice(0,-1),menu:S.menu})}).then(function(r){S.chat[S.chat.length-1].content=r.reply;draw()}).catch(function(){S.chat[S.chat.length-1].content="Connection problem. Tap 'Talk to a person'.";draw()})}});
+    api("/api/chat",{method:"POST",body:JSON.stringify({messages:S.chat.slice(0,-1),menu:S.menu})}).then(function(r){var x=r.reply||"";if(/^(Sorry, I could not|The assistant is not available)/.test(x))x=faq(q);S.chat[S.chat.length-1].content=x;draw()}).catch(function(){S.chat[S.chat.length-1].content=faq(q);draw()})}});
 document.addEventListener("keydown",function(e){if(e.key==="Enter"&&e.target.id==="ci")document.getElementById("cs").click()});
 window.onMenu=function(d){S.menu=d;S.items=[];
   function add(a){a.forEach(function(x){var p=Number(x.price);S.items.push({name:x.name,price:p>0?p:0})})}
