@@ -22,6 +22,19 @@ export default async (req) => {
     return J({ ok: true, url: "/api/img/" + id });
   }
 
+  if (path === "/api/receipt" && req.method === "POST") {
+    const { id, data } = await req.json();
+    if (typeof data !== "string" || !data.startsWith("data:image/") || data.length > 2500000) return J({ error: "Picture is too big or not an image." }, 400);
+    const o = await orders().get(String(id), { type: "json" });
+    if (!o) return J({ error: "Order not found." }, 404);
+    const imgId = "p" + randomBytes(12).toString("hex");
+    await getStore("images").set(imgId, data);
+    o.receipt = "/api/img/" + imgId;
+    o.receiptTime = new Date().toISOString();
+    await orders().setJSON(o.id, o);
+    return J({ ok: true });
+  }
+
   if (path.startsWith("/api/img/") && req.method === "GET") {
     const key = path.slice(9);
     if (!/^p[a-z0-9]+$/.test(key)) return new Response("Not found", { status: 404 });
@@ -36,6 +49,23 @@ export default async (req) => {
     const e = String(email || "").trim().toLowerCase();
     if (!/^\S+@\S+\.\S+$/.test(e) || String(password || "").length < 6) return J({ error: "Enter a valid email and a password of 6 or more characters." }, 400);
     let u = await users().get(e, { type: "json" });
+    if (mode === "reset") {
+      if (!isAdmin(req)) return J({ error: "Wrong password." }, 401);
+      if (!u) return J({ error: "No account with that email." }, 404);
+      const salt = randomBytes(16).toString("hex");
+      u.salt = salt; u.hash = hash(password, salt);
+      await users().setJSON(e, u);
+      return J({ ok: true });
+    }
+    if (mode === "reset") {
+      if (!isAdmin(req)) return J({ error: "Wrong admin password." }, 401);
+      if (!u) return J({ error: "No account with that email." }, 404);
+      const salt = randomBytes(16).toString("hex");
+      u.salt = salt;
+      u.hash = hash(password, salt);
+      await users().setJSON(e, u);
+      return J({ ok: true });
+    }
     if (mode === "signup") {
       if (u) return J({ error: "Account already exists. Please log in." }, 409);
       const salt = randomBytes(16).toString("hex");
@@ -99,4 +129,4 @@ export default async (req) => {
   return J({ error: "Not found" }, 404);
 };
 
-export const config = { path: ["/api/auth", "/api/orders", "/api/chat", "/api/upload", "/api/img/*"] };
+export const config = { path: ["/api/auth", "/api/orders", "/api/chat", "/api/upload", "/api/receipt", "/api/img/*"] };
