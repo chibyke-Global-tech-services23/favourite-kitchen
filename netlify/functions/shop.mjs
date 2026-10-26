@@ -13,6 +13,24 @@ async function who(req) {
 export default async (req) => {
   const path = new URL(req.url).pathname;
 
+  if (path === "/api/upload" && req.method === "POST") {
+    if (!isAdmin(req)) return J({ error: "Wrong password." }, 401);
+    const { data } = await req.json();
+    if (typeof data !== "string" || !data.startsWith("data:image/") || data.length > 2500000) return J({ error: "Picture is too big or not an image." }, 400);
+    const id = "p" + Date.now().toString(36) + randomBytes(3).toString("hex");
+    await getStore("images").set(id, data);
+    return J({ ok: true, url: "/api/img/" + id });
+  }
+
+  if (path.startsWith("/api/img/") && req.method === "GET") {
+    const key = path.slice(9);
+    if (!/^p[a-z0-9]+$/.test(key)) return new Response("Not found", { status: 404 });
+    const d = await getStore("images").get(key);
+    if (!d) return new Response("Not found", { status: 404 });
+    const mime = d.slice(5, d.indexOf(";"));
+    return new Response(Buffer.from(d.slice(d.indexOf(",") + 1), "base64"), { headers: { "content-type": mime, "cache-control": "public, max-age=86400" } });
+  }
+
   if (path === "/api/auth" && req.method === "POST") {
     const { mode, email, password, name, phone } = await req.json();
     const e = String(email || "").trim().toLowerCase();
@@ -81,4 +99,4 @@ export default async (req) => {
   return J({ error: "Not found" }, 404);
 };
 
-export const config = { path: ["/api/auth", "/api/orders", "/api/chat"] };
+export const config = { path: ["/api/auth", "/api/orders", "/api/chat", "/api/upload", "/api/img/*"] };
