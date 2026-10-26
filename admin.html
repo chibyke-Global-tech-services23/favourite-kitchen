@@ -66,6 +66,14 @@ var SECTIONS={
   drinks:{cls:"",f:[["name","Item"],["price","Price"]],blank:{name:"",price:""},btn:"Add drink"},
   accounts:{cls:"a",f:[["bank","Bank"],["number","Account number"],["name","Account name"]],blank:{bank:"",number:"",name:""},btn:"Add account"}
 };
+function picRow(row,i){return '<div style="margin:-2px 0 12px;display:flex;align-items:center;gap:10px"><label class="add" style="padding:6px 12px;margin:0;cursor:pointer;border-radius:7px;font-weight:700">Change picture<input type="file" accept="image/*" data-pic="'+i+'" style="display:none"></label><small>'+(row.img?'picture set':'no picture')+'</small></div>'}
+function shrink(file,cb){var r=new FileReader();r.onload=function(){var im=new Image();im.onload=function(){var s=Math.min(1,900/Math.max(im.width,im.height)),c=document.createElement("canvas");c.width=Math.round(im.width*s);c.height=Math.round(im.height*s);c.getContext("2d").drawImage(im,0,0,c.width,c.height);cb(c.toDataURL("image/jpeg",0.8))};im.src=r.result};r.readAsDataURL(file)}
+document.addEventListener("change",function(e){var t=e.target;if(!t.dataset||t.dataset.pic===undefined)return;var f=t.files[0];if(!f)return;
+  $("msg").textContent="Uploading picture...";
+  shrink(f,function(url){fetch("/api/upload",{method:"POST",headers:{"content-type":"application/json","x-admin-password":pass},body:JSON.stringify({data:url})})
+  .then(function(r){return r.json().then(function(j){return{ok:r.ok,j:j}})})
+  .then(function(x){if(!x.ok){$("msg").textContent=x.j.error||"Upload failed.";return}data.specials[+t.dataset.pic].img=x.j.url;draw();$("msg").textContent="Picture added. Now tap Save changes."})
+  .catch(function(){$("msg").textContent="Upload failed. Check your connection."})})});
 function draw(){
   Object.keys(SECTIONS).forEach(function(k){
     var S=SECTIONS[k],html="";
@@ -74,6 +82,7 @@ function draw(){
         html+='<div class="card" style="margin-bottom:8px">'+S.f.map(function(f){return '<label>'+f[1]+'</label><input data-k="'+k+'" data-i="'+i+'" data-f="'+f[0]+'" value="'+esc(row[f[0]])+'">'}).join("")+'<button class="x add" style="margin-top:10px;width:100%;padding:8px" data-del="'+k+':'+i+'">Remove account</button></div>';
       }else{
         html+='<div class="r '+S.cls+'">'+S.f.map(function(f){return '<input aria-label="'+f[1]+'" placeholder="'+f[1]+'" data-k="'+k+'" data-i="'+i+'" data-f="'+f[0]+'" value="'+esc(row[f[0]])+'"'+(f[0]==="price"?' inputmode="numeric"':'')+'>'}).join("")+'<button class="x" aria-label="Remove" data-del="'+k+':'+i+'">✕</button></div>';
+        if(k==="specials")html+=picRow(row,i);
       }
     });
     html+='<button class="add" data-add="'+k+'">'+S.btn+'</button>';
