@@ -34,12 +34,13 @@ export default async (req) => {
   if (path === "/api/orders") {
     if (req.method === "POST") {
       const me = await who(req);
-      if (!me) return J({ error: "Please log in to place an order." }, 401);
       const b = await req.json();
+      const guestOk = !me && b.guest && String(b.phone || "").trim().length >= 7 && String(b.name || "").trim();
+      if (!me && !guestOk) return J({ error: "Please enter your name and phone number." }, 401);
       if (!Array.isArray(b.items) || !b.items.length) return J({ error: "Your cart is empty." }, 400);
       const id = "KF" + Date.now().toString(36).toUpperCase();
       const items = b.items.slice(0, 40).map((i) => ({ name: String(i.name).slice(0, 80), price: Number(i.price) || 0, qty: Math.min(50, Number(i.qty) || 1) }));
-      const o = { id, email: me.email, name: me.name, phone: String(b.phone || me.phone || "").slice(0, 20), address: String(b.address || "").slice(0, 300), note: String(b.note || "").slice(0, 300), items, status: "New", time: new Date().toISOString() };
+      const o = { id, email: me ? me.email : "guest", name: me ? me.name : String(b.name).slice(0, 60), phone: String(b.phone || (me && me.phone) || "").slice(0, 20), address: String(b.address || "").slice(0, 300), note: String(b.note || "").slice(0, 300), items, status: "New", time: new Date().toISOString() };
       o.total = items.reduce((s, i) => s + i.price * i.qty, 0);
       await orders().setJSON(id, o);
       return J({ ok: true, id, total: o.total });
